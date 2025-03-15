@@ -1,49 +1,49 @@
 {
-  "hash": "630c394e",
-  "configHash": "1eecc632",
+  "hash": "999d21ad",
+  "configHash": "69bd45f0",
   "lockfileHash": "f52252d7",
-  "browserHash": "f3510b60",
+  "browserHash": "cb674b64",
   "optimized": {
     "react/jsx-dev-runtime": {
       "src": "../../node_modules/react/jsx-dev-runtime.js",
       "file": "react_jsx-dev-runtime.js",
-      "fileHash": "8484d38e",
+      "fileHash": "0e191667",
       "needsInterop": true
     },
     "react": {
       "src": "../../node_modules/react/index.js",
       "file": "react.js",
-      "fileHash": "2fad5468",
+      "fileHash": "3eca69d7",
       "needsInterop": true
     },
     "react-dom/client": {
       "src": "../../node_modules/react-dom/client.js",
       "file": "react-dom_client.js",
-      "fileHash": "029b29cf",
+      "fileHash": "9531bc0f",
       "needsInterop": true
     },
     "react-router-dom": {
       "src": "../../node_modules/react-router-dom/dist/index.mjs",
       "file": "react-router-dom.js",
-      "fileHash": "cc1a9421",
+      "fileHash": "b91e1a2a",
       "needsInterop": false
     },
     "react-toastify": {
       "src": "../../node_modules/react-toastify/dist/index.mjs",
       "file": "react-toastify.js",
-      "fileHash": "48ec80af",
+      "fileHash": "ae5cbb11",
       "needsInterop": false
     },
     "framer-motion": {
       "src": "../../node_modules/framer-motion/dist/es/index.mjs",
       "file": "framer-motion.js",
-      "fileHash": "b8377511",
+      "fileHash": "fe31f35d",
       "needsInterop": false
     },
     "lucide-react": {
       "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
       "file": "lucide-react.js",
-      "fileHash": "2f179600",
+      "fileHash": "1c63d574",
       "needsInterop": false
     }
   },
