@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
       }
       
       try {
-        const response = await fetch(`http://localhost:3000/api/hub/user/${userId}`, {
+        const response = await fetch(`https://rembeka-backend-e0ebcgafbxewcyg4.canadacentral-01.azurewebsites.net/api/hub/user/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
