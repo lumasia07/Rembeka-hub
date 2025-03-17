@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
       }
       
       try {
-        const response = await fetch(`http://localhost:3000/api/hub/user/${userId}`, {
+        const response = await fetch(`https://0981-154-159-237-144.ngrok-free.app/api/hub/user/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

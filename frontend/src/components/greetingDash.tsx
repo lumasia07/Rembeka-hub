@@ -34,7 +34,7 @@ const GreetingHeader: React.FC<GreetingHeaderProps> = ({ onSignOut }) => {
         const authToken = localStorage.getItem("authToken");
         if (!authToken) return;
 
-        const response = await fetch("http://localhost:3000/api/user/profile", {
+        const response = await fetch("https://0981-154-159-237-144.ngrok-free.app/api/user/profile", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${authToken}`,

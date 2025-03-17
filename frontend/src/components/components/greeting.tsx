@@ -28,7 +28,7 @@ const GreetingHeader: React.FC<GreetingHeaderProps> = ({ onSignOut, onCreateHub 
           throw new Error("No authentication token found. Please log in.");
         }
 
-        const response = await fetch("http://localhost:3000/api/user/profile", {
+        const response = await fetch("https://0981-154-159-237-144.ngrok-free.app/api/user/profile", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

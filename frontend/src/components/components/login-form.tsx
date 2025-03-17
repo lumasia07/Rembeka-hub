@@ -20,7 +20,7 @@ export function LoginForm({
     event.preventDefault();
   
     try {
-      const response = await fetch('http://localhost:3000/api/user/login', {
+      const response = await fetch('https://0981-154-159-237-144.ngrok-free.app/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export function LoginForm({
         toast.success("Logged in successfully!");
   
         // Check if the user has a hub
-        const hubResponse = await fetch(`http://localhost:3000/api/hub/user/${data.user.id}`, {
+        const hubResponse = await fetch(`https://0981-154-159-237-144.ngrok-free.app/api/hub/user/${data.user.id}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${data.token}`,
