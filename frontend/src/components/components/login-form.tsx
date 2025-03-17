@@ -17,19 +17,19 @@ export function LoginForm({
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-  
-    try {
-      const response = await fetch('https://0981-154-159-237-144.ngrok-free.app/api/user/login', {
+  event.preventDefault();
+
+  try {
+      const response = await fetch('http://localhost:3000/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         // Store token and user data in localStorage
         localStorage.setItem('authToken', data.token);
@@ -38,20 +38,20 @@ export function LoginForm({
           role: data.user.role,
           id: data.user.id,
         }));
-  
+
         toast.success("Logged in successfully!");
-  
+
         // Check if the user has a hub
-        const hubResponse = await fetch(`https://0981-154-159-237-144.ngrok-free.app/api/hub/user/${data.user.id}`, {
+        const hubResponse = await fetch(`http://localhost:3000/api/hub/user/${data.user.id}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${data.token}`,
           },
         });
-  
+
         if (hubResponse.ok) {
           const hubData = await hubResponse.json();
-  
+
           if (hubData.hub) {
             // User has a hub, redirect to dashboard
             navigate('/dashboard');

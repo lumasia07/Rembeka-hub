@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { HubDetailsCard } from "@/components/hubDetails";
-import { ServicesList } from "@/components/services";
+// import { ServicesList } from "@/components/services";
 import { ProductsList } from "@/components/products";
 import GreetingHeader from "@/components/greetingDash";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/components/ui/tabs";
@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
       }
       
       try {
-        const response = await fetch(`https://0981-154-159-237-144.ngrok-free.app/api/hub/user/${userId}`, {
+        const response = await fetch(`http://localhost:3000/api/hub/user/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,10 +63,10 @@ const Dashboard: React.FC = () => {
     window.location.href = "/login";
   };
 
-  // Calculated metrics (these would typically come from your API)
-  const totalServices = hub?.services.length || 0;
-  const totalProducts = hub?.products.length || 0;
-  const totalItems = totalServices + totalProducts;
+//   // Calculated metrics (these would typically come from your API)
+//   const totalServices = hub?.services.length || 0;
+//   const totalProducts = hub?.products.length || 0;
+//   const totalItems = totalServices + totalProducts;
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
@@ -97,7 +97,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Services</p>
-                      <h3 className="text-2xl font-bold">{totalServices}</h3>
+                      {/* <h3 className="text-2xl font-bold">{totalServices}</h3> */}
                     </div>
                     <div className="p-2 bg-primary/10 rounded-full">
                       <UserPlus className="h-5 w-5 text-primary" />
@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Products</p>
-                      <h3 className="text-2xl font-bold">{totalProducts}</h3>
+                      {/* <h3 className="text-2xl font-bold">{totalProducts}</h3> */}
                     </div>
                     <div className="p-2 bg-primary/10 rounded-full">
                       <TrendingUp className="h-5 w-5 text-primary" />
@@ -125,7 +125,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Total Items</p>
-                      <h3 className="text-2xl font-bold">{totalItems}</h3>
+                      {/* <h3 className="text-2xl font-bold">{totalItems}</h3> */}
                     </div>
                     <div className="p-2 bg-primary/10 rounded-full">
                       <Settings className="h-5 w-5 text-primary" />
@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
             
             <TabsContent value="services">
               <ScrollArea className="h-full max-h-[600px] pr-4">
-                <ServicesList services={hub.services} />
+                {/* <ServicesList services={hub.services} /> */}
               </ScrollArea>
             </TabsContent>
             
