@@ -12,6 +12,8 @@ import { Footer } from './components/Footer';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/profilePage';
+import HubRegistrationForm from './pages/createHub';
+import Dashboard from './pages/dashBoard';
 
 export function App() {
   return (
@@ -28,16 +30,18 @@ export function App() {
                   <FeaturedProducts />
                   <VendorShowcase />
                   <Features />
+                  <Footer />
                 </>
               }
             />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/create-hub" element={<HubRegistrationForm />} />
+            <Route path="/dashboard" element={<Dashboard/>} />
 
           </Routes>
         </main>
-        <Footer />
       </div>
       <ToastContainer />
     </Router>

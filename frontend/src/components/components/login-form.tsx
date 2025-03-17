@@ -20,7 +20,7 @@ export function LoginForm({
     event.preventDefault();
   
     try {
-      const response = await fetch('https://7256-154-159-237-144.ngrok-free.app/api/user/login', {
+      const response = await fetch('http://localhost:3000/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,7 +29,6 @@ export function LoginForm({
       });
   
       const data = await response.json();
-      console.log('Backend response:', data);
   
       if (response.ok) {
         // Store token and user data in localStorage
@@ -37,10 +36,32 @@ export function LoginForm({
         localStorage.setItem('user', JSON.stringify({
           email: data.user.email,
           role: data.user.role,
-          id: data.user.id
+          id: data.user.id,
         }));
+  
         toast.success("Logged in successfully!");
-        navigate('/profile');
+  
+        // Check if the user has a hub
+        const hubResponse = await fetch(`http://localhost:3000/api/hub/user/${data.user.id}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${data.token}`,
+          },
+        });
+  
+        if (hubResponse.ok) {
+          const hubData = await hubResponse.json();
+  
+          if (hubData.hub) {
+            // User has a hub, redirect to dashboard
+            navigate('/dashboard');
+          } else {
+            // User does not have a hub, redirect to initial profile
+            navigate('/profile');
+          }
+        } else {
+          toast.error("Failed to check hub status");
+        }
       } else {
         toast.error(data.message || "Failed to login");
       }

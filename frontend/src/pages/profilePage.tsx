@@ -3,7 +3,7 @@ import GreetingHeader from "@/components/components/greeting";
 
 const ProfilePage: React.FC = () => {
   const handleSignOut = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("authToken");
     window.location.href = "/login"; // Redirect to login page
   };
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/UserRoutes.js';
+import hubRoutes from './routes/hubRoutes.js';
 
 const app = express();
 const PORT = 3000;
@@ -18,6 +19,9 @@ app.get('/', (req, res) => {
 
 // User routes
 app.use('/api/user', userRoutes);
+
+// Hub Routes
+app.use('/api/hub', hubRoutes);
 
 // Start the server
 app.listen(PORT, () => {

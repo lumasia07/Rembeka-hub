@@ -22,15 +22,38 @@ export function RegisterForm({
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+  
+    // Basic email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      toast.error("Please enter a valid email address.");
+      return;
+    }
+  
+    // Phone number validation (allows digits, hyphens, spaces, or parentheses)
+    const phonePattern = /^\+?[0-9\s\-()]{7,15}$/;
+    if (!phonePattern.test(phoneNo)) {
+      toast.error("Please enter a valid phone number.");
+      return;
+    }
+  
+    // Password strength validation
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordPattern.test(password)) {
+      toast.error(
+        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one digit, and one special character."
+      );
+      return;
+    }
+  
     // Validate password match
     if (password !== confirmPassword) {
       toast.error("Passwords do not match.");
       return;
     }
-
+  
     try {
-      const response = await fetch('https://7256-154-159-237-144.ngrok-free.app/api/user/register', {
+      const response = await fetch('http://localhost:3000/api/user/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,9 +66,9 @@ export function RegisterForm({
           password,
         }),
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         toast.success("Registration successful! Please login.");
         navigate('/login'); // Redirect to the login page
@@ -57,6 +80,7 @@ export function RegisterForm({
       toast.error("An error occurred. Please try again.");
     }
   };
+  
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
