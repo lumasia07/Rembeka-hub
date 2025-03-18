@@ -20,7 +20,7 @@ export function LoginForm({
   event.preventDefault();
 
   try {
-      const response = await fetch('https://rembeka-backend-e0ebcgafbxewcyg4.canadacentral-01.azurewebsites.net/api/user/login', {
+      const response = await fetch('http://localhost:3000/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export function LoginForm({
         toast.success("Logged in successfully!");
 
         // Check if the user has a hub
-        const hubResponse = await fetch(`https://rembeka-backend-e0ebcgafbxewcyg4.canadacentral-01.azurewebsites.net/api/hub/user/${data.user.id}`, {
+        const hubResponse = await fetch(`http://localhost:3000/api/hub/user/${data.user.id}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${data.token}`,
