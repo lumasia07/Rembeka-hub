@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import userRoutes from './routes/UserRoutes.js';
 import hubRoutes from './routes/hubRoutes.js';
+import productRoutes from './routes/productRoutes.js';
 
 const app = express();
 const PORT = 3000;
@@ -22,6 +23,9 @@ app.use('/api/user', userRoutes);
 
 // Hub Routes
 app.use('/api/hub', hubRoutes);
+
+//Product routes
+app.use('/api/product', productRoutes);
 
 // Start the server
 app.listen(PORT, () => {
