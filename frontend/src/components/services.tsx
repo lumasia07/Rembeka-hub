@@ -1,8 +1,8 @@
 // import React from "react";
-// import { Card, CardHeader, CardTitle, CardContent } from "@/components/componets/ui/card";
+// import { Card, CardHeader, CardTitle, CardContent } from "@/components/components/ui/card";
 // import { Scissors, Smile, Clock, Star } from "lucide-react";
-// import { Button } from "@/components/componets/ui/button";
-// import { Badge } from "@/components/componets/ui/badge";
+// import { Button } from "@/components/components/ui/button";
+// import { Badge } from "@/components/components/ui/badge";
 
 // interface Service {
 //   id: string;

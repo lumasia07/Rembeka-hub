@@ -14,6 +14,10 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/profilePage';
 import HubRegistrationForm from './pages/createHub';
 import Dashboard from './pages/dashBoard';
+import CreateProductForm from './pages/AddProduct';
+import { AllProducts } from './pages/AllProducts';
+import HubPage from './pages/viewStore';
+import ProductShowcase from './pages/AllProductsPublic';
 
 export function App() {
   return (
@@ -39,7 +43,10 @@ export function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/create-hub" element={<HubRegistrationForm />} />
             <Route path="/dashboard" element={<Dashboard/>} />
-
+            <Route path="/add-product" element={<CreateProductForm/>} />
+            <Route path="/all-products" element={<AllProducts/>} />
+            <Route path="/hubs/:id" element={<HubPage/>} />
+            <Route path="/products" element={<ProductShowcase/>} />
           </Routes>
         </main>
       </div>
