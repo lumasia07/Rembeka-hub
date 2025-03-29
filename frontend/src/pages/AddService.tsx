@@ -6,11 +6,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/component
 import { Label } from "@/components/components/ui/label";
 import { Textarea } from "@/components/components/ui/textarea";
 import { Checkbox } from "@/components/components/ui/checkbox";
-import { Loader2, Image as ImageIcon, X } from "lucide-react";
+import { Loader2, Image as ImageIcon, X, Clock } from "lucide-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-export default function CreateProductForm() {
+export default function CreateServiceForm() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -20,15 +20,15 @@ export default function CreateProductForm() {
     name: "",
     description: "",
     price: "",
+    duration: "",
     image: null as File | null,
-    inStock: false,
+    isAvailable: true,
   });
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    if (!formData.name.trim()) newErrors.name = "Product name is required";
-    if (!formData.description.trim()) newErrors.description = "Description is required";
+    if (!formData.name.trim()) newErrors.name = "Service name is required";
     if (!formData.price) {
       newErrors.price = "Price is required";
     } else if (isNaN(Number(formData.price))) {
@@ -36,7 +36,9 @@ export default function CreateProductForm() {
     } else if (Number(formData.price) <= 0) {
       newErrors.price = "Price must be greater than 0";
     }
-    if (!formData.image) newErrors.image = "Product image is required";
+    if (formData.duration && isNaN(Number(formData.duration))) {
+      newErrors.duration = "Duration must be a number";
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -57,7 +59,7 @@ export default function CreateProductForm() {
   const handleCheckboxChange = (checked: boolean) => {
     setFormData((prev) => ({
       ...prev,
-      inStock: checked,
+      isAvailable: checked,
     }));
   };
 
@@ -93,13 +95,14 @@ export default function CreateProductForm() {
     submissionData.append("name", formData.name);
     submissionData.append("description", formData.description);
     submissionData.append("price", formData.price);
-    submissionData.append("inStock", formData.inStock.toString());
+    submissionData.append("duration", formData.duration);
+    submissionData.append("isAvailable", formData.isAvailable.toString());
     if (formData.image) {
       submissionData.append("image", formData.image);
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/product/add-product", {
+      const response = await fetch("http://localhost:3000/api/service/add-service", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -109,10 +112,10 @@ export default function CreateProductForm() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to add product");
+        throw new Error(errorData.message || "Failed to add service");
       }
 
-      toast.success("Product added successfully!", {
+      toast.success("Service added successfully!", {
         position: "top-center",
         autoClose: 3000,
         hideProgressBar: false,
@@ -126,15 +129,16 @@ export default function CreateProductForm() {
         name: "",
         description: "",
         price: "",
+        duration: "",
         image: null,
-        inStock: false,
+        isAvailable: true,
       });
       setImagePreview(null);
       
       navigate("/dashboard");
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "Failed to add product", {
+      toast.error(error instanceof Error ? error.message : "Failed to add service", {
         position: "top-center",
         autoClose: 5000,
         hideProgressBar: false,
@@ -152,58 +156,75 @@ export default function CreateProductForm() {
       <ToastContainer />
       <Card className="max-w-lg mx-auto mt-10 p-6 shadow-lg">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Add New Product</CardTitle>
+          <CardTitle className="text-2xl font-bold">Add New Service</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Product Name *</Label>
+              <Label htmlFor="name">Service Name *</Label>
               <Input 
                 id="name" 
                 value={formData.name} 
                 onChange={handleChange} 
-                placeholder="Enter product name" 
+                placeholder="Enter service name" 
                 className={errors.name ? "border-red-500" : ""}
               />
               {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
+              <Label htmlFor="description">Description</Label>
               <Textarea 
                 id="description" 
                 value={formData.description} 
                 onChange={handleChange} 
                 placeholder="Enter description" 
                 rows={4}
-                className={errors.description ? "border-red-500" : ""}
               />
-              {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price">Price *</Label>
+                <Input 
+                  id="price" 
+                  type="number" 
+                  step="0.01" 
+                  min="0.01"
+                  value={formData.price} 
+                  onChange={handleChange} 
+                  placeholder="0.00"
+                  className={errors.price ? "border-red-500" : ""}
+                />
+                {errors.price && <p className="text-sm text-red-500">{errors.price}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duration (minutes)</Label>
+                <div className="relative">
+                  <Input 
+                    id="duration" 
+                    type="number" 
+                    min="1"
+                    value={formData.duration} 
+                    onChange={handleChange} 
+                    placeholder="e.g. 30"
+                    className={errors.duration ? "border-red-500" : ""}
+                  />
+                  <Clock className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+                </div>
+                {errors.duration && <p className="text-sm text-red-500">{errors.duration}</p>}
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="price">Price *</Label>
-              <Input 
-                id="price" 
-                type="number" 
-                step="0.01" 
-                min="0.01"
-                value={formData.price} 
-                onChange={handleChange} 
-                placeholder="0.00"
-                className={errors.price ? "border-red-500" : ""}
-              />
-              {errors.price && <p className="text-sm text-red-500">{errors.price}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="image">Product Image *</Label>
+              <Label htmlFor="image">Service Image</Label>
               <div className="flex flex-col gap-4">
                 {imagePreview ? (
                   <div className="relative group">
                     <img 
                       src={imagePreview} 
-                      alt="Product preview" 
+                      alt="Service preview" 
                       className="w-full h-48 object-contain rounded-md border border-gray-200"
                     />
                     <button
@@ -238,21 +259,19 @@ export default function CreateProductForm() {
                   type="button"
                   variant="outline"
                   onClick={() => document.getElementById('image')?.click()}
-                  className={errors.image ? "border-red-500" : ""}
                 >
                   Choose Image
                 </Button>
-                {errors.image && <p className="text-sm text-red-500">{errors.image}</p>}
               </div>
             </div>
 
             <div className="flex items-center gap-2">
               <Checkbox 
-                id="inStock" 
-                checked={formData.inStock} 
+                id="isAvailable" 
+                checked={formData.isAvailable} 
                 onCheckedChange={handleCheckboxChange} 
               />
-              <Label htmlFor="inStock">This product is in stock</Label>
+              <Label htmlFor="isAvailable">This service is currently available</Label>
             </div>
 
             <div className="flex gap-4 pt-4">
@@ -276,7 +295,7 @@ export default function CreateProductForm() {
                     Adding...
                   </>
                 ) : (
-                  "Add Product"
+                  "Add Service"
                 )}
               </Button>
             </div>

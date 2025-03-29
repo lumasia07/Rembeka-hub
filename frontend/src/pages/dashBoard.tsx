@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { HubDetailsCard } from "@/components/hubDetails";
-// import { ServicesList } from "@/components/services";
+import { ServicesList } from "@/components/services";
 import { ProductsList } from "@/components/products";
 import GreetingHeader from "@/components/greetingDash";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/components/ui/tabs";
@@ -144,7 +144,7 @@ const Dashboard: React.FC = () => {
             
             <TabsContent value="services">
               <ScrollArea className="h-full max-h-[600px] pr-4">
-                {/* <ServicesList services={hub.services} /> */}
+                <ServicesList services={hub.services} />
               </ScrollArea>
             </TabsContent>
             

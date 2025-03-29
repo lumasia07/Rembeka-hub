@@ -18,6 +18,10 @@ import CreateProductForm from './pages/AddProduct';
 import { AllProducts } from './pages/AllProducts';
 import HubPage from './pages/viewStore';
 import ProductShowcase from './pages/AllProductsPublic';
+import CreateServiceForm from './pages/AddService';
+import { AllServices } from './pages/AllServices';
+import { FeaturedServices } from './components/FeauturedServices';
+import ServiceShowcase from './pages/AllServicesPublic';
 
 export function App() {
   return (
@@ -32,6 +36,7 @@ export function App() {
                   <Header />
                   <Hero />
                   <FeaturedProducts />
+                  <FeaturedServices />
                   <VendorShowcase />
                   <Features />
                   <Footer />
@@ -47,6 +52,9 @@ export function App() {
             <Route path="/all-products" element={<AllProducts/>} />
             <Route path="/hubs/:id" element={<HubPage/>} />
             <Route path="/products" element={<ProductShowcase/>} />
+            <Route path="/add-service" element={<CreateServiceForm/>} />
+            <Route path="/all-services" element={<AllServices/>} />
+            <Route path="/services" element={<ServiceShowcase/>} />
           </Routes>
         </main>
       </div>

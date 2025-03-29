@@ -34,8 +34,8 @@ export const Header = () => {
             <Link to="/products" className="text-gray-800 hover:text-pink-500 transition-colors">
               Products
             </Link>
-            <Link to="/vendors" className="text-gray-800 hover:text-pink-500 transition-colors">
-              Vendors
+            <Link to="/services" className="text-gray-800 hover:text-pink-500 transition-colors">
+              Services
             </Link>
             <Link to="/about" className="text-gray-800 hover:text-pink-500 transition-colors">
               About
