@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ClockIcon, HeartIcon, StarIcon, Loader2 } from 'lucide-react';
+import { ClockIcon, HeartIcon, StarIcon, Loader2, X} from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from "@/components/components/ui/dialog";
+import { 
+  FaInstagram,
+  FaFacebook,
+  FaTwitter,
+  FaYoutube,
+  FaTiktok
+} from 'react-icons/fa';
 
 interface Service {
   id: string;
@@ -11,7 +25,14 @@ interface Service {
   image?: string;
   isAvailable: boolean;
   hub?: {
+    id: string;
     name: string;
+    socials?: {
+      id: string;
+      platform: string;
+      handle: string;
+      url: string;
+    }[];
   };
   rating?: number;
 }
@@ -20,6 +41,8 @@ export const FeaturedServices = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -36,7 +59,6 @@ export const FeaturedServices = () => {
         }
 
         const data = await response.json();
-        // Filter available services and take first 4 as featured
         const availableServices = data.filter((s: Service) => s.isAvailable);
         setServices(availableServices.slice(0, 4));
       } catch (err) {
@@ -48,6 +70,30 @@ export const FeaturedServices = () => {
 
     fetchServices();
   }, []);
+
+  const getPlatformIcon = (platform: string) => {
+    const iconClass = "w-5 h-5";
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return <FaInstagram className={`${iconClass} text-pink-600`} />;
+      case 'facebook':
+        return <FaFacebook className={`${iconClass} text-blue-600`} />;
+      case 'twitter':
+        return <FaTwitter className={`${iconClass} text-blue-400`} />;
+      case 'youtube':
+        return <FaYoutube className={`${iconClass} text-red-600`} />;
+      case 'tiktok':
+        return <FaTiktok className={`${iconClass} text-black`} />;
+      default:
+        return <div className={`${iconClass} text-gray-600`} />;
+    }
+  };
+  
+
+  const handleServiceClick = (service: Service) => {
+    setSelectedService(service);
+    setIsSocialModalOpen(true);
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -130,7 +176,8 @@ export const FeaturedServices = () => {
               <motion.div 
                 key={service.id} 
                 variants={itemVariants} 
-                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => handleServiceClick(service)}
               >
                 <div className="relative h-64 overflow-hidden group">
                   <img 
@@ -184,6 +231,10 @@ export const FeaturedServices = () => {
                           : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       }`}
                       disabled={!service.isAvailable}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle booking logic here
+                      }}
                     >
                       {service.isAvailable ? 'Book Now' : 'Unavailable'}
                     </button>
@@ -197,6 +248,52 @@ export const FeaturedServices = () => {
             <p className="text-gray-500">No featured services available</p>
           </div>
         )}
+
+        {/* Social Media Modal */}
+        <Dialog open={isSocialModalOpen} onOpenChange={setIsSocialModalOpen}>
+          <DialogContent aria-describedby="socials-description">
+            <DialogHeader>
+              <DialogTitle className="flex justify-between items-center">
+                <span>{selectedService?.hub?.name || 'Professional'} Socials</span>
+                <button 
+                  onClick={() => setIsSocialModalOpen(false)}
+                  className="p-1 rounded-full hover:bg-gray-100"
+                  aria-label="Close social media dialog"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </DialogTitle>
+            </DialogHeader>
+            
+            <DialogDescription id="socials-description">
+              Connect with this professional on social media
+            </DialogDescription>
+            
+            <div className="space-y-4">
+              {selectedService?.hub?.socials?.length ? (
+                selectedService.hub.socials.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    {getPlatformIcon(social.platform)}
+                    <div>
+                      <p className="font-medium">{social.platform}</p>
+                      <p className="text-sm text-gray-500">@{social.handle}</p>
+                    </div>
+                  </a>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4">
+                  No social media links available
+                </p>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <div className="text-center mt-10">
           <motion.button 

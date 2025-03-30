@@ -6,8 +6,9 @@ import GreetingHeader from "@/components/greetingDash";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/components/ui/tabs";
 import { ScrollArea } from "@/components/components/ui/scroll-area";
 import { Separator } from "@/components/components/ui/separator";
-import { UserPlus, TrendingUp, Settings } from "lucide-react";
+import { UserPlus, TrendingUp, Settings, Share2 } from "lucide-react";
 import { Card, CardContent } from "@/components/components/ui/card";
+import { SocialLinks } from "./SocialLinks";
 
 interface Hub {
   id: string;
@@ -23,6 +24,7 @@ interface Hub {
 const Dashboard: React.FC = () => {
   const [hub, setHub] = useState<Hub | null>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("services");
   
   useEffect(() => {
     const fetchHubDetails = async () => {
@@ -63,11 +65,6 @@ const Dashboard: React.FC = () => {
     window.location.href = "/login";
   };
 
-//   // Calculated metrics (these would typically come from your API)
-//   const totalServices = hub?.services.length || 0;
-//   const totalProducts = hub?.products.length || 0;
-//   const totalItems = totalServices + totalProducts;
-  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
       <GreetingHeader onSignOut={handleSignOut} />
@@ -97,7 +94,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Services</p>
-                      {/* <h3 className="text-2xl font-bold">{totalServices}</h3> */}
+                      <h3 className="text-2xl font-bold">{hub.services.length}</h3>
                     </div>
                     <div className="p-2 bg-primary/10 rounded-full">
                       <UserPlus className="h-5 w-5 text-primary" />
@@ -111,7 +108,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-sm font-medium text-muted-foreground">Products</p>
-                      {/* <h3 className="text-2xl font-bold">{totalProducts}</h3> */}
+                      <h3 className="text-2xl font-bold">{hub.products.length}</h3>
                     </div>
                     <div className="p-2 bg-primary/10 rounded-full">
                       <TrendingUp className="h-5 w-5 text-primary" />
@@ -124,11 +121,11 @@ const Dashboard: React.FC = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">Total Items</p>
-                      {/* <h3 className="text-2xl font-bold">{totalItems}</h3> */}
+                      <p className="text-sm font-medium text-muted-foreground">Social Links</p>
+                      <h3 className="text-2xl font-bold">Manage</h3>
                     </div>
                     <div className="p-2 bg-primary/10 rounded-full">
-                      <Settings className="h-5 w-5 text-primary" />
+                      <Share2 className="h-5 w-5 text-primary" />
                     </div>
                   </div>
                 </CardContent>
@@ -136,24 +133,46 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           
-          <Tabs defaultValue="services" className="w-full">
-            <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
-              <TabsTrigger value="services">Services</TabsTrigger>
-              <TabsTrigger value="products">Products</TabsTrigger>
-            </TabsList>
+          {/* Main Content Area */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <Tabs 
+                defaultValue="services" 
+                className="w-full"
+                onValueChange={(value) => setActiveTab(value)}
+              >
+                <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+                  <TabsTrigger value="services">Services</TabsTrigger>
+                  <TabsTrigger value="products">Products</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="services">
+                  <ScrollArea className="h-full max-h-[600px] pr-4">
+                    <ServicesList services={hub.services} />
+                  </ScrollArea>
+                </TabsContent>
+                
+                <TabsContent value="products">
+                  <ScrollArea className="h-full max-h-[600px] pr-4">
+                    <ProductsList products={hub.products} />
+                  </ScrollArea>
+                </TabsContent>
+              </Tabs>
+            </div>
             
-            <TabsContent value="services">
-              <ScrollArea className="h-full max-h-[600px] pr-4">
-                <ServicesList services={hub.services} />
-              </ScrollArea>
-            </TabsContent>
-            
-            <TabsContent value="products">
-              <ScrollArea className="h-full max-h-[600px] pr-4">
-                <ProductsList products={hub.products} />
-              </ScrollArea>
-            </TabsContent>
-          </Tabs>
+            {/* Social Links Sidebar */}
+            <div className="lg:col-span-1">
+              <Card className="shadow-md hover:shadow-lg transition-shadow h-full">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Share2 className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Social Media Links</h3>
+                  </div>
+                  <SocialLinks />
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-96">

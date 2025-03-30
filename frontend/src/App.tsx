@@ -22,6 +22,7 @@ import CreateServiceForm from './pages/AddService';
 import { AllServices } from './pages/AllServices';
 import { FeaturedServices } from './components/FeauturedServices';
 import ServiceShowcase from './pages/AllServicesPublic';
+import { SocialLinks } from './pages/SocialLinks';
 
 export function App() {
   return (
@@ -55,6 +56,7 @@ export function App() {
             <Route path="/add-service" element={<CreateServiceForm/>} />
             <Route path="/all-services" element={<AllServices/>} />
             <Route path="/services" element={<ServiceShowcase/>} />
+            <Route path="/socials" element={<SocialLinks/>} />
           </Routes>
         </main>
       </div>
