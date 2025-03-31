@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ClockIcon, HeartIcon, StarIcon, Loader2, X} from 'lucide-react';
+import { ClockIcon, HeartIcon, StarIcon, Loader2, X, ImageIcon } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -34,7 +34,16 @@ interface Service {
       url: string;
     }[];
   };
+  hubId?: string;
   rating?: number;
+}
+
+interface Social {
+  id: string;
+  platform: string;
+  handle: string;
+  url: string;
+  hubId: string;
 }
 
 export const FeaturedServices = () => {
@@ -43,6 +52,9 @@ export const FeaturedServices = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+  const [socials, setSocials] = useState<Social[]>([]);
+  const [loadingSocials, setLoadingSocials] = useState(false);
+  const [socialError, setSocialError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -71,6 +83,62 @@ export const FeaturedServices = () => {
     fetchServices();
   }, []);
 
+  const handleServiceClick = async (service: Service) => {
+    setSelectedService(service);
+    setIsSocialModalOpen(true);
+    
+    try {
+      // First check if socials are already in the service data
+      if (service.hub?.socials?.length) {
+        const formattedSocials = service.hub.socials.map(social => ({
+          ...social,
+          url: social.url.startsWith('http') ? social.url : `https://${social.url}`,
+          hubId: service.hub?.id || service.hubId || ''
+        }));
+        setSocials(formattedSocials);
+        return;
+      }
+
+      // Only fetch if we have a hubId
+      const hubId = service.hub?.id || service.hubId;
+      if (!hubId) {
+        setSocials([]);
+        setSocialError("No hub associated with this service");
+        return;
+      }
+
+      setLoadingSocials(true);
+      setSocialError(null);
+      
+      const response = await fetch(`http://localhost:3000/api/socials/hub-socials/${hubId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch social media links');
+      }
+
+      const data = await response.json();
+      
+      // Ensure URLs have https:// and include hubId
+      const formattedSocials = data.map((social: Social) => ({
+        ...social,
+        url: social.url.startsWith('http') ? social.url : `https://${social.url}`,
+        hubId: hubId
+      }));
+      
+      setSocials(formattedSocials);
+    } catch (err) {
+      console.error('Error fetching socials:', err);
+      setSocialError(err instanceof Error ? err.message : 'Failed to load social media links');
+    } finally {
+      setLoadingSocials(false);
+    }
+  };
+
   const getPlatformIcon = (platform: string) => {
     const iconClass = "w-5 h-5";
     switch (platform.toLowerCase()) {
@@ -88,11 +156,37 @@ export const FeaturedServices = () => {
         return <div className={`${iconClass} text-gray-600`} />;
     }
   };
-  
 
-  const handleServiceClick = (service: Service) => {
-    setSelectedService(service);
-    setIsSocialModalOpen(true);
+  const renderServiceImage = (service: Service) => {
+    if (!service.image) {
+      return (
+        <div className="h-64 w-full bg-gray-100 flex items-center justify-center">
+          <ImageIcon className="w-12 h-12 text-gray-300" />
+        </div>
+      );
+    }
+
+    // Handle both URL and base64 images
+    const imageSrc = service.image.startsWith('http') 
+      ? service.image 
+      : service.image.startsWith('data:image')
+        ? service.image
+        : `data:image/jpeg;base64,${service.image}`;
+
+    return (
+      <img
+        src={imageSrc}
+        alt={service.name}
+        className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.onerror = null;
+          target.src = '';
+          target.className = 'h-64 w-full bg-gray-100 flex items-center justify-center';
+          target.innerHTML = '<ImageIcon className="w-12 h-12 text-gray-300" />';
+        }}
+      />
+    );
   };
 
   const containerVariants = {
@@ -180,15 +274,7 @@ export const FeaturedServices = () => {
                 onClick={() => handleServiceClick(service)}
               >
                 <div className="relative h-64 overflow-hidden group">
-                  <img 
-                    src={service.image || 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'}
-                    alt={service.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
-                    }}
-                  />
+                  {renderServiceImage(service)}
                   <div className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-sm">
                     <HeartIcon size={18} className="text-gray-400 hover:text-pink-500 cursor-pointer transition-colors" />
                   </div>
@@ -251,7 +337,7 @@ export const FeaturedServices = () => {
 
         {/* Social Media Modal */}
         <Dialog open={isSocialModalOpen} onOpenChange={setIsSocialModalOpen}>
-          <DialogContent aria-describedby="socials-description">
+          <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex justify-between items-center">
                 <span>{selectedService?.hub?.name || 'Professional'} Socials</span>
@@ -263,15 +349,20 @@ export const FeaturedServices = () => {
                   <X className="h-5 w-5" />
                 </button>
               </DialogTitle>
+              <DialogDescription>
+                Connect with this professional on social media
+              </DialogDescription>
             </DialogHeader>
             
-            <DialogDescription id="socials-description">
-              Connect with this professional on social media
-            </DialogDescription>
-            
             <div className="space-y-4">
-              {selectedService?.hub?.socials?.length ? (
-                selectedService.hub.socials.map((social) => (
+              {loadingSocials ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                </div>
+              ) : socialError ? (
+                <p className="text-center text-red-500 py-4">{socialError}</p>
+              ) : socials.length > 0 ? (
+                socials.map((social) => (
                   <a
                     key={social.id}
                     href={social.url}
@@ -300,7 +391,7 @@ export const FeaturedServices = () => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-white text-pink-600 border border-pink-200 px-6 py-3 rounded-md hover:bg-pink-50 transition-colors inline-flex items-center gap-2"
-            onClick={() => window.location.href = '/all-services'}
+            onClick={() => window.location.href = '/services'}
           >
             View All Services
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

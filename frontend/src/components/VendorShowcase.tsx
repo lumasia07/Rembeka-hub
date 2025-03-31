@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShieldCheckIcon, AwardIcon, TrendingUpIcon, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from "@/components/components/ui/badge";
 
 interface Hub {
   id: string;
@@ -24,7 +25,15 @@ export const VendorShowcase = () => {
   const [hubs, setHubs] = useState<Hub[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
+
+  // Consistent image handling function
+  const getImageSrc = (image: string | null, fallback: string) => {
+    if (!image) return fallback;
+    if (image.startsWith('http')) return image;
+    if (image.startsWith('data:image')) return image;
+    return `data:image/jpeg;base64,${image}`;
+  };
 
   useEffect(() => {
     const fetchHubs = async () => {
@@ -46,7 +55,7 @@ export const VendorShowcase = () => {
   }, []);
 
   const handleViewStore = (hubId: string) => {
-    navigate(`/hubs/${hubId}`); // Add this navigation handler
+    navigate(`/hubs/${hubId}`);
   };
 
   if (loading) {
@@ -141,42 +150,44 @@ export const VendorShowcase = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+              className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow group"
             >
-              <div className="h-48 overflow-hidden">
+              <div className="relative h-48 overflow-hidden">
                 <img
-                  src={hub.coverImage || 'https://images.unsplash.com/photo-1571875257727-256c39da42af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'}
+                  src={getImageSrc(hub.coverImage, 'https://images.unsplash.com/photo-1571875257727-256c39da42af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80')}
                   alt={hub.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
                     target.src = 'https://images.unsplash.com/photo-1571875257727-256c39da42af?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
                   }}
                 />
+                <div className="absolute top-3 right-3 flex gap-2">
+                  {hub.verified && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <ShieldCheckIcon className="w-3 h-3" />
+                      Verified
+                    </Badge>
+                  )}
+                  {hub.trending && (
+                    <Badge variant="secondary" className="flex items-center gap-1">
+                      <TrendingUpIcon className="w-3 h-3" />
+                      Trending
+                    </Badge>
+                  )}
+                </div>
               </div>
               <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4">
                   <h3 className="text-xl font-bold">{hub.name}</h3>
-                  <div className="flex items-center">
-                    {hub.verified && (
-                      <div className="mr-2 text-blue-600 bg-blue-100 p-1 rounded-full" title="Verified Vendor">
-                        <ShieldCheckIcon size={16} />
-                      </div>
-                    )}
-                    {hub.trending && (
-                      <div className="text-orange-600 bg-orange-100 p-1 rounded-full" title="Trending">
-                        <TrendingUpIcon size={16} />
-                      </div>
-                    )}
-                  </div>
+                  <p className="text-sm text-gray-500 mt-1">{hub.user.firstName} {hub.user.lastName}</p>
                 </div>
                 <div className="flex items-center mb-4">
                   <div className="flex">
                     {[...Array(5)].map((_, i) => (
                       <svg
                         key={i}
-                        className={`w-4 h-4 ${i < 4 ? 'text-yellow-400' : 'text-gray-300'}`}
-                        fill="currentColor"
+                        className={`w-4 h-4 ${i < 4 ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'}`}
                         viewBox="0 0 20 20"
                       >
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
@@ -198,7 +209,7 @@ export const VendorShowcase = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-md text-sm"
-                    onClick={() => handleViewStore(hub.id)} // Add onClick handler
+                    onClick={() => handleViewStore(hub.id)}
                   >
                     View Store
                   </motion.button>

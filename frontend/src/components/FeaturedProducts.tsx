@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBagIcon, HeartIcon, StarIcon, Loader2 } from 'lucide-react';
+import { ShoppingBagIcon, HeartIcon, StarIcon, Loader2, X, ImageIcon } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from "@/components/components/ui/dialog";
+import { 
+  FaInstagram,
+  FaFacebook,
+  FaTwitter,
+  FaYoutube,
+  FaTiktok
+} from 'react-icons/fa';
 
 interface Product {
   id: string;
@@ -9,15 +23,36 @@ interface Product {
   price: number;
   image?: string;
   hub?: {
+    id: string;
     name: string;
+    socials?: {
+      id: string;
+      platform: string;
+      handle: string;
+      url: string;
+    }[];
   };
+  hubId?: string;
   rating?: number;
+}
+
+interface Social {
+  id: string;
+  platform: string;
+  handle: string;
+  url: string;
+  hubId: string;
 }
 
 export const FeaturedProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isSocialModalOpen, setIsSocialModalOpen] = useState(false);
+  const [socials, setSocials] = useState<Social[]>([]);
+  const [loadingSocials, setLoadingSocials] = useState(false);
+  const [socialError, setSocialError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -34,7 +69,6 @@ export const FeaturedProducts = () => {
         }
 
         const data = await response.json();
-        // Take first 4 products as featured or implement a proper featured flag in your API
         setProducts(data.slice(0, 4));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load products');
@@ -45,6 +79,112 @@ export const FeaturedProducts = () => {
 
     fetchProducts();
   }, []);
+
+  const handleProductClick = async (product: Product) => {
+    setSelectedProduct(product);
+    setIsSocialModalOpen(true);
+    
+    try {
+      // First check if socials are already in the product data
+      if (product.hub?.socials?.length) {
+        const formattedSocials = product.hub.socials.map(social => ({
+          ...social,
+          url: social.url.startsWith('http') ? social.url : `https://${social.url}`,
+          hubId: product.hub?.id || product.hubId || ''
+        }));
+        setSocials(formattedSocials);
+        return;
+      }
+
+      // Only fetch if we have a hubId
+      const hubId = product.hub?.id || product.hubId;
+      if (!hubId) {
+        setSocials([]);
+        setSocialError("No hub associated with this product");
+        return;
+      }
+
+      setLoadingSocials(true);
+      setSocialError(null);
+      
+      const response = await fetch(`http://localhost:3000/api/socials/hub-socials/${hubId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch social media links');
+      }
+
+      const data = await response.json();
+      
+      // Ensure URLs have https:// and include hubId
+      const formattedSocials = data.map((social: Social) => ({
+        ...social,
+        url: social.url.startsWith('http') ? social.url : `https://${social.url}`,
+        hubId: hubId
+      }));
+      
+      setSocials(formattedSocials);
+    } catch (err) {
+      console.error('Error fetching socials:', err);
+      setSocialError(err instanceof Error ? err.message : 'Failed to load social media links');
+    } finally {
+      setLoadingSocials(false);
+    }
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    const iconClass = "w-5 h-5";
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return <FaInstagram className={`${iconClass} text-pink-600`} />;
+      case 'facebook':
+        return <FaFacebook className={`${iconClass} text-blue-600`} />;
+      case 'twitter':
+        return <FaTwitter className={`${iconClass} text-blue-400`} />;
+      case 'youtube':
+        return <FaYoutube className={`${iconClass} text-red-600`} />;
+      case 'tiktok':
+        return <FaTiktok className={`${iconClass} text-black`} />;
+      default:
+        return <div className={`${iconClass} text-gray-600`} />;
+    }
+  };
+
+  const renderProductImage = (product: Product) => {
+    if (!product.image) {
+      return (
+        <div className="h-64 w-full bg-gray-100 flex items-center justify-center">
+          <ImageIcon className="w-12 h-12 text-gray-300" />
+        </div>
+      );
+    }
+
+    // Handle both URL and base64 images
+    const imageSrc = product.image.startsWith('http') 
+      ? product.image 
+      : product.image.startsWith('data:image')
+        ? product.image
+        : `data:image/jpeg;base64,${product.image}`;
+
+    return (
+      <img
+        src={imageSrc}
+        alt={product.name}
+        className="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.onerror = null;
+          target.src = '';
+          target.className = 'h-64 w-full bg-gray-100 flex items-center justify-center';
+          target.innerHTML = '<ImageIcon className="w-12 h-12 text-gray-300" />';
+        }}
+      />
+    );
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -127,18 +267,11 @@ export const FeaturedProducts = () => {
               <motion.div 
                 key={product.id} 
                 variants={itemVariants} 
-                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+                onClick={() => handleProductClick(product)}
               >
                 <div className="relative h-64 overflow-hidden group">
-                  <img 
-                    src={product.image || 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80'}
-                    alt={product.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80';
-                    }}
-                  />
+                  {renderProductImage(product)}
                   <div className="absolute top-3 right-3 bg-white p-2 rounded-full shadow-sm">
                     <HeartIcon size={18} className="text-gray-400 hover:text-pink-500 cursor-pointer transition-colors" />
                   </div>
@@ -166,7 +299,13 @@ export const FeaturedProducts = () => {
                     <span className="font-bold text-lg">
                       ${product.price.toFixed(2)}
                     </span>
-                    <button className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-lg transition-colors">
+                    <button 
+                      className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-lg transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle add to cart logic here
+                      }}
+                    >
                       <ShoppingBagIcon size={18} />
                     </button>
                   </div>
@@ -180,11 +319,63 @@ export const FeaturedProducts = () => {
           </div>
         )}
 
+        {/* Social Media Modal */}
+        <Dialog open={isSocialModalOpen} onOpenChange={setIsSocialModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex justify-between items-center">
+                <span>{selectedProduct?.hub?.name || 'Vendor'} Socials</span>
+                <button 
+                  onClick={() => setIsSocialModalOpen(false)}
+                  className="p-1 rounded-full hover:bg-gray-100"
+                  aria-label="Close social media dialog"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </DialogTitle>
+              <DialogDescription>
+                Connect with this vendor on social media
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              {loadingSocials ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                </div>
+              ) : socialError ? (
+                <p className="text-center text-red-500 py-4">{socialError}</p>
+              ) : socials.length > 0 ? (
+                socials.map((social) => (
+                  <a
+                    key={social.id}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    {getPlatformIcon(social.platform)}
+                    <div>
+                      <p className="font-medium">{social.platform}</p>
+                      <p className="text-sm text-gray-500">@{social.handle}</p>
+                    </div>
+                  </a>
+                ))
+              ) : (
+                <p className="text-center text-gray-500 py-4">
+                  No social media links available
+                </p>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
+
         <div className="text-center mt-10">
           <motion.button 
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="bg-white text-pink-600 border border-pink-200 px-6 py-3 rounded-md hover:bg-pink-50 transition-colors inline-flex items-center gap-2"
+            onClick={() => window.location.href = '/products'}
           >
             View All Products
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

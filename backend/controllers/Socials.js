@@ -91,3 +91,19 @@ export const deleteSocial = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+// Add this function to the existing controller file
+export const getSocialsByHubId = async (req, res) => {
+  try {
+    const { hubId } = req.params;
+    
+    const socials = await prisma.social.findMany({
+      where: { hubId }
+    });
+
+    res.status(200).json(socials);
+  } catch (error) {
+    console.error("Error fetching hub socials:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};

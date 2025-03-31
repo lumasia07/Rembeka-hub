@@ -23,6 +23,7 @@ import { AllServices } from './pages/AllServices';
 import { FeaturedServices } from './components/FeauturedServices';
 import ServiceShowcase from './pages/AllServicesPublic';
 import { SocialLinks } from './pages/SocialLinks';
+import AllVendorShowcase from './components/AllVendors';
 
 export function App() {
   return (
@@ -57,6 +58,7 @@ export function App() {
             <Route path="/all-services" element={<AllServices/>} />
             <Route path="/services" element={<ServiceShowcase/>} />
             <Route path="/socials" element={<SocialLinks/>} />
+            <Route path="/vendors" element={<AllVendorShowcase/>} />
           </Routes>
         </main>
       </div>

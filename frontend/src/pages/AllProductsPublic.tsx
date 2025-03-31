@@ -9,6 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/components/ui/dialog";
+import { 
+  FaInstagram,
+  FaFacebook,
+  FaTwitter,
+  FaYoutube,
+  FaTiktok
+} from 'react-icons/fa';
 
 interface Product {
   id: string;
@@ -19,8 +26,24 @@ interface Product {
   category?: string;
   stock?: number;
   hub?: {
+    id: string;
     name: string;
+    socials?: {
+      id: string;
+      platform: string;
+      handle: string;
+      url: string;
+    }[];
   };
+  hubId?: string;
+}
+
+interface Social {
+  id: string;
+  platform: string;
+  handle: string;
+  url: string;
+  hubId: string;
 }
 
 export const ProductShowcase: React.FC = () => {
@@ -31,6 +54,9 @@ export const ProductShowcase: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [socials, setSocials] = useState<Social[]>([]);
+  const [loadingSocials, setLoadingSocials] = useState(false);
+  const [socialError, setSocialError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -65,15 +91,84 @@ export const ProductShowcase: React.FC = () => {
     }
   }, [searchTerm, products]);
 
+  const handleQuickView = async (product: Product) => {
+    setQuickViewProduct(product);
+    setIsQuickViewOpen(true);
+    
+    try {
+      // First check if socials are already in the product data
+      if (product.hub?.socials?.length) {
+        const formattedSocials = product.hub.socials.map(social => ({
+          ...social,
+          url: social.url.startsWith('http') ? social.url : `https://${social.url}`,
+          hubId: product.hub?.id || product.hubId || ''
+        }));
+        setSocials(formattedSocials);
+        return;
+      }
+
+      // Only fetch if we have a hubId
+      const hubId = product.hub?.id || product.hubId;
+      if (!hubId) {
+        setSocials([]);
+        setSocialError("No hub associated with this product");
+        return;
+      }
+
+      setLoadingSocials(true);
+      setSocialError(null);
+      
+      const response = await fetch(`http://localhost:3000/api/socials/hub-socials/${hubId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch social media links');
+      }
+
+      const data = await response.json();
+      
+      // Ensure URLs have https:// and include hubId
+      const formattedSocials = data.map((social: Social) => ({
+        ...social,
+        url: social.url.startsWith('http') ? social.url : `https://${social.url}`,
+        hubId: hubId
+      }));
+      
+      setSocials(formattedSocials);
+    } catch (err) {
+      console.error('Error fetching socials:', err);
+      setSocialError(err instanceof Error ? err.message : 'Failed to load social media links');
+    } finally {
+      setLoadingSocials(false);
+    }
+  };
+
+  const getPlatformIcon = (platform: string) => {
+    const iconClass = "w-5 h-5";
+    switch (platform.toLowerCase()) {
+      case 'instagram':
+        return <FaInstagram className={`${iconClass} text-pink-600`} />;
+      case 'facebook':
+        return <FaFacebook className={`${iconClass} text-blue-600`} />;
+      case 'twitter':
+        return <FaTwitter className={`${iconClass} text-blue-400`} />;
+      case 'youtube':
+        return <FaYoutube className={`${iconClass} text-red-600`} />;
+      case 'tiktok':
+        return <FaTiktok className={`${iconClass} text-black`} />;
+      default:
+        return <div className={`${iconClass} text-gray-600`} />;
+    }
+  };
+
   const getImageSrc = (image: string | null, fallback: string) => {
     if (!image) return fallback;
     if (image.startsWith('data:image')) return image;
     return `data:image/jpeg;base64,${image}`;
-  };
-
-  const handleQuickView = (product: Product) => {
-    setQuickViewProduct(product);
-    setIsQuickViewOpen(true);
   };
 
   if (loading) {
@@ -149,7 +244,14 @@ export const ProductShowcase: React.FC = () => {
                 <div className="flex items-center">
                   <span className="text-sm text-gray-600">{product.hub?.name || 'Vendor'}</span>
                 </div>
-                <Button size="sm" className="gap-1">
+                <Button 
+                  size="sm" 
+                  className="gap-1"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Handle add to cart logic here
+                  }}
+                >
                   <ShoppingBag className="w-4 h-4" />
                   Add to Cart
                 </Button>
@@ -214,6 +316,36 @@ export const ProductShowcase: React.FC = () => {
                       </p>
                     )}
                   </div>
+
+                  {/* Social Media Links Section */}
+                  <div className="pt-4 border-t">
+                    <h3 className="font-medium mb-3">Connect with Vendor</h3>
+                    {loadingSocials ? (
+                      <div className="flex justify-center py-2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-primary"></div>
+                      </div>
+                    ) : socialError ? (
+                      <p className="text-sm text-red-500">{socialError}</p>
+                    ) : socials.length > 0 ? (
+                      <div className="flex flex-wrap gap-3">
+                        {socials.map((social) => (
+                          <a
+                            key={social.id}
+                            href={social.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                          >
+                            {getPlatformIcon(social.platform)}
+                            <span className="text-sm">@{social.handle}</span>
+                          </a>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">No social media links available</p>
+                    )}
+                  </div>
+
                   <div className="flex gap-4 pt-4">
                     <Button className="flex-1" size="lg">
                       <ShoppingBag className="mr-2 h-4 w-4" />
