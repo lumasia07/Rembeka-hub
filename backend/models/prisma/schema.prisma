@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -30,9 +30,9 @@ model Hub {
   coverImage  String?     // URL to cover image
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  
+
   // Relations
-  userId      String      @unique  // One-to-one with User
+  userId      String      @unique
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   products    Product[]   // One-to-many with Product
   services    Service[]   // One-to-many with Service
@@ -48,7 +48,7 @@ model Product {
   inStock     Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
+
   // Relations
   hubId       String
   hub         Hub       @relation(fields: [hubId], references: [id], onDelete: Cascade)
@@ -64,7 +64,7 @@ model Service {
   isAvailable Boolean   @default(true)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  
+
   // Relations
   hubId       String
   hub         Hub       @relation(fields: [hubId], references: [id], onDelete: Cascade)
@@ -77,7 +77,7 @@ model Social {
   url       String   // Full URL to profile
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   // Relations
   hubId     String
   hub       Hub     @relation(fields: [hubId], references: [id], onDelete: Cascade)
