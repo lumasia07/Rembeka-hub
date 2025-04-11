@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
       }
       
       try {
-        const response = await fetch(`http://localhost:3000/api/hub/user/${userId}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/hub/user/${userId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

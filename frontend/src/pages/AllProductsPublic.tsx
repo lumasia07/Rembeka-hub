@@ -61,7 +61,7 @@ export const ProductShowcase: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/product/all-products");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/all-products`);
         if (!response.ok) throw new Error(`Failed to fetch products: ${response.status}`);
         const data = await response.json();
         setProducts(data);
@@ -118,7 +118,7 @@ export const ProductShowcase: React.FC = () => {
       setLoadingSocials(true);
       setSocialError(null);
       
-      const response = await fetch(`http://localhost:3000/api/socials/hub-socials/${hubId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/socials/hub-socials/${hubId}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,

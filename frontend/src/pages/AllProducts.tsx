@@ -50,7 +50,7 @@ export const AllProducts: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/product/all-products", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/all-products`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -97,7 +97,7 @@ export const AllProducts: React.FC = () => {
     
     try {
       const response = await fetch(
-        `http://localhost:3000/api/product/delete-product/${selectedProduct.id}`,
+        `${import.meta.env.VITE_API_URL}/api/product/delete-product/${selectedProduct.id}`,
         {
           method: "DELETE",
           headers: {
@@ -122,7 +122,7 @@ export const AllProducts: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/product/edit-product/${selectedProduct.id}`,
+        `${import.meta.env.VITE_API_URL}/api/product/edit-product/${selectedProduct.id}`,
         {
           method: "PUT",
           headers: {

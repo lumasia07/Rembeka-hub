@@ -25,7 +25,7 @@ export const ProductsList: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/product/all-products", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/all-products`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

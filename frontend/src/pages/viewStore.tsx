@@ -91,7 +91,7 @@ const HubPage = () => {
   useEffect(() => {
     const fetchHub = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/api/hub/${id}`);
+        const response = await fetch(`/api/hub/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch hub');
         }

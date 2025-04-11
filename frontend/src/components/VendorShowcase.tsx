@@ -38,7 +38,7 @@ export const VendorShowcase = () => {
   useEffect(() => {
     const fetchHubs = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/hub/hubs');
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/hub/hubs`);
         if (!response.ok) {
           throw new Error('Failed to fetch hubs');
         }

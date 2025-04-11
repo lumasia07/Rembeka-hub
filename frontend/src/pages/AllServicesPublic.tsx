@@ -62,7 +62,7 @@ export const ServiceShowcase: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/service/all-services");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/service/all-services`);
         if (!response.ok) throw new Error(`Failed to fetch services: ${response.status}`);
         const data = await response.json();
         setServices(data);
@@ -119,7 +119,7 @@ export const ServiceShowcase: React.FC = () => {
       setLoadingSocials(true);
       setSocialError(null);
       
-      const response = await fetch(`http://localhost:3000/api/socials/hub-socials/${hubId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/socials/hub-socials/${hubId}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,
