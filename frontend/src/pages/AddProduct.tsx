@@ -99,7 +99,7 @@ export default function CreateProductForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/product/add-product", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/add-product`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,

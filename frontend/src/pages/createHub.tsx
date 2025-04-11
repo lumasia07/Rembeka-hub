@@ -132,7 +132,7 @@ const HubRegistrationForm = () => {
         throw new Error("No authentication token found");
       }
   
-      const response = await fetch("http://localhost:3000/api/hub/create-hub", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/hub/create-hub`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,

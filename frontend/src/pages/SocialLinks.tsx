@@ -25,7 +25,7 @@ export const SocialLinks = () => {
   const fetchSocials = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3000/api/socials/all-socials", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/socials/all-socials`, {
         headers: { 
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("authToken")}` 
@@ -52,8 +52,8 @@ export const SocialLinks = () => {
       setLoading(true);
       const socialUrl = `${formData.platform.toLowerCase()}.com/${formData.handle}`;
       const endpoint = editingId 
-        ? `http://localhost:3000/api/socials/edit-social/${editingId}`
-        : "http://localhost:3000/api/socials/add-socials";
+        ? `${import.meta.env.VITE_API_URL}/api/socials/edit-social/${editingId}`
+        : `${import.meta.env.VITE_API_URL}/api/socials/add-socials`;
       
       const method = editingId ? "PUT" : "POST";
 
@@ -86,7 +86,7 @@ export const SocialLinks = () => {
   const handleDelete = async (id: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:3000/api/socials/delete-social/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/socials/delete-social/${id}`, {
         method: "DELETE",
         headers: { 
           "Content-Type": "application/json",

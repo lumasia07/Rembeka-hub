@@ -57,7 +57,7 @@ export const FeaturedProducts = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/product/all-products', {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/all-products`, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('authToken')}`,
@@ -107,7 +107,7 @@ export const FeaturedProducts = () => {
       setLoadingSocials(true);
       setSocialError(null);
       
-      const response = await fetch(`http://localhost:3000/api/socials/hub-socials/${hubId}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/socials/hub-socials/${hubId}`, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('authToken')}`,

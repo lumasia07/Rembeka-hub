@@ -28,7 +28,7 @@ const GreetingHeader: React.FC<GreetingHeaderProps> = ({ onSignOut, onCreateHub 
           throw new Error("No authentication token found. Please log in.");
         }
 
-        const response = await fetch("http://localhost:3000/api/user/profile", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user/profile`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

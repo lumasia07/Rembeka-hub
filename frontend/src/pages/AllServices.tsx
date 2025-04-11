@@ -53,7 +53,7 @@ export const AllServices: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/service/all-services", {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/service/all-services`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export const AllServices: React.FC = () => {
     
     try {
       const response = await fetch(
-        `http://localhost:3000/api/service/delete-service/${selectedService.id}`,
+        `${import.meta.env.VITE_API_URL}/api/service/delete-service/${selectedService.id}`,
         {
           method: "DELETE",
           headers: {
@@ -127,7 +127,7 @@ export const AllServices: React.FC = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:3000/api/service/edit-service/${selectedService.id}`,
+        `${import.meta.env.VITE_API_URL}/api/service/edit-service/${selectedService.id}`,
         {
           method: "PUT",
           headers: {

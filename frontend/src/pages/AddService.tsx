@@ -102,7 +102,7 @@ export default function CreateServiceForm() {
     }
 
     try {
-      const response = await fetch("http://localhost:3000/api/service/add-service", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/service/add-service`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
