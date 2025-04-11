@@ -14,7 +14,11 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate --schema=./models/prisma/schema.prisma"
   },
-  "type": "module"
+  "type": "module",
+  "prisma": {
+  "schema": "models/prisma/schema.prisma"
+  }
+
 }
