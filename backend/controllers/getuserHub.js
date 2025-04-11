@@ -43,35 +43,34 @@ export async function getAllHubs(req, res) {
 // Get a specific user's hub
 export async function getUserHub(req, res) {
   try {
-    const userId = req.user?.userId;
-    
+    const userId = req.params.userId;
+
     const hub = await prisma.hub.findUnique({
-      where: {
-        userId: userId,
-      },
+      where: { userId },
       include: {
         user: {
           select: {
             firstName: true,
             lastName: true,
             email: true,
-            phoneNo: true
+            phoneNo: true,
           }
         },
-        products: true, // Get all products
-        services: true, // Get all services
-        socials: true
-      }
+        products: true,
+        services: true,
+        socials: true,
+      },
     });
 
     if (!hub) {
-      return res.status(404).json({ error: "Hub not found" });
+      return res.status(200).json({ hub: null }); // still a success, just no hub yet
     }
 
     return res.status(200).json({ hub });
+
   } catch (error) {
-    console.error("Error fetching user hub:", error);
-    return res.status(500).json({ error: "Failed to fetch user hub" });
+    console.error('Error fetching user hub:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 }
 
