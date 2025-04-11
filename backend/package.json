@@ -12,7 +12,9 @@
     "prisma": "^6.5.0"
   },
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "postinstall": "prisma generate"
   },
   "type": "module"
 }
