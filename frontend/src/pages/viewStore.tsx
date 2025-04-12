@@ -91,7 +91,7 @@ const HubPage = () => {
   useEffect(() => {
     const fetchHub = async () => {
       try {
-        const response = await fetch(`/api/hub/${id}`);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/hub/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch hub');
         }
