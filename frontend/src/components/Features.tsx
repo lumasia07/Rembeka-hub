@@ -1,4 +1,3 @@
-import React, { Children } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBagIcon, UsersIcon, TrendingUpIcon, GlobeIcon } from 'lucide-react';
 export const Features = () => {

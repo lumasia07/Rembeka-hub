@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { MenuIcon, XIcon, SearchIcon, ShoppingBagIcon, UserIcon } from 'lucide-react';
@@ -38,39 +38,48 @@ export const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/" className="text-gray-800 hover:text-pink-500 transition-colors">
+            {/* <Link to="/" className="text-gray-800 hover:text-pink-500 transition-colors">
               Home
-            </Link>
-            <Link to="/products" className="text-gray-800 hover:text-pink-500 transition-colors">
+            </Link> */}
+            <Link to="/products" className="text-white hover:text-pink-500 transition-colors">
               Products
             </Link>
-            <Link to="/services" className="text-gray-800 hover:text-pink-500 transition-colors">
+            <Link to="/services" className="text-white hover:text-pink-500 transition-colors">
               Services
             </Link>
-            <Link to="/vendors" className="text-gray-800 hover:text-pink-500 transition-colors">
+            <Link to="/vendors" className="text-white hover:text-pink-500 transition-colors">
               Vendors
             </Link>
-            <Link to="/contact" className="text-gray-800 hover:text-pink-500 transition-colors">
+            {/* <Link to="/contact" className="text-gray-800 hover:text-pink-500 transition-colors">
               Contact
-            </Link>
+            </Link> */}
           </nav>
 
           {/* Desktop Action Buttons */}
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="text-gray-700 hover:text-pink-500">
+            {/* <Button variant="ghost" size="icon" className="text-gray-700 hover:text-pink-500">
               <SearchIcon className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" size="icon" className="text-gray-700 hover:text-pink-500">
+            </Button> */}
+            {/* <Button variant="ghost" size="icon" className="text-gray-700 hover:text-pink-500">
               <ShoppingBagIcon className="h-5 w-5" />
-            </Button>
-            <Button 
+            </Button> */}
+            {/* <Button 
               variant="ghost" 
               size="icon" 
               className="text-gray-700 hover:text-pink-500"
               onClick={handleUserIconClick}
             >
               <UserIcon className="h-5 w-5" />
+            </Button> */}
+             <Button 
+              asChild
+              className="bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:opacity-90"
+            >
+              <Link to="/login">
+                Login
+              </Link>
             </Button>
+
             <Button 
               asChild
               className="bg-gradient-to-r from-pink-500 to-purple-600 text-white hover:opacity-90"
