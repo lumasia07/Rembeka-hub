@@ -23,31 +23,49 @@ export function RegisterForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
+  const validateName = (name: string) => {
+    return /^[A-Za-z]+$/.test(name);
+  };
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
+    // Name validation
+    if (!validateName(firstName)) {
+      toast.error("First name should only contain letters");
+      return;
+    }
+
+    if (!validateName(lastName)) {
+      toast.error("Last name should only contain letters");
+      return;
+    }
+
+    // Email validation
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
-      toast.error("Please enter a valid email address.");
+      toast.error("Please enter a valid email address");
       return;
     }
 
-    const phonePattern = /^\+?[0-9\s\-()]{7,15}$/;
+    // Phone validation
+    const phonePattern = /^\+?[0-9]{10}$/;
     if (!phonePattern.test(phoneNo)) {
-      toast.error("Please enter a valid phone number.");
+      toast.error("Please enter a valid phone number (10-digits)");
       return;
     }
 
+    // Password validation
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordPattern.test(password)) {
       toast.error(
-        "Password must be at least 8 characters long, include at least one uppercase letter, one lowercase letter, one digit, and one special character."
+        "Password must have: 8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char"
       );
       return;
     }
 
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match.");
+      toast.error("Passwords don't match");
       return;
     }
 
@@ -72,95 +90,99 @@ export function RegisterForm({
         toast.success("Registration successful! Please login.");
         navigate('/login');
       } else {
-        toast.error(data.message || "Failed to register.");
+        toast.error(data.message || "Registration failed");
       }
     } catch (error) {
-      console.error('Error during registration:', error);
+      console.error('Registration error:', error);
       toast.error("An error occurred. Please try again.");
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <ToastContainer />
-      <Card className="overflow-hidden">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Create an account</h1>
-                <p className="text-balance text-muted-foreground">
-                  Join Rembeka Hub today
+    <div className={cn("flex flex-col gap-6 max-w-md mx-auto", className)} {...props}>
+      <ToastContainer position="top-center" autoClose={3000} />
+      <Card className="w-full">
+        <CardContent className="p-6">
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col gap-4">
+              <div className="text-center mb-4">
+                <h1 className="text-2xl font-bold">Create Account</h1>
+                <p className="text-sm text-gray-500">
+                  Join our platform today
                 </p>
               </div>
 
-              {/* First Name */}
-              <div className="grid gap-2 text-gray-700 hover:text-pink-500 transition-colors">
-                <Label htmlFor="firstName">First Name</Label>
-                <Input
-                  id="firstName"
-                  type="text"
-                  placeholder="John"
-                  required
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="grid gap-2 text-gray-700 hover:text-pink-500 transition-colors">
-                <Label htmlFor="lastName">Last Name</Label>
-                <Input
-                  id="lastName"
-                  type="text"
-                  placeholder="Doe"
-                  required
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
+              {/* Name Fields */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="John"
+                    required
+                    pattern="[A-Za-z]+"
+                    title="Letters only"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Doe"
+                    required
+                    pattern="[A-Za-z]+"
+                    title="Letters only"
+                  />
+                </div>
               </div>
 
               {/* Email */}
-              <div className="grid gap-2 text-gray-700 hover:text-pink-500 transition-colors">
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="janedoe@example.com"
-                  required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="janedoe@example.com"
+                  required
                 />
               </div>
 
-              {/* Phone Number */}
-              <div className="grid gap-2 text-gray-700 hover:text-pink-500 transition-colors">
+              {/* Phone */}
+              <div className="space-y-2">
                 <Label htmlFor="phoneNo">Phone Number</Label>
                 <Input
                   id="phoneNo"
                   type="tel"
-                  placeholder="07222222222"
-                  required
                   value={phoneNo}
                   onChange={(e) => setPhoneNo(e.target.value)}
+                  placeholder="070000000"
+                  required
+                  pattern="\+?[0-9]{10}"
+                  title="10 digits"
                 />
               </div>
 
               {/* Password */}
-              <div className="grid gap-2 text-gray-700 hover:text-pink-500 transition-colors">
+              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                   <button
                     type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-pink-500"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -168,20 +190,20 @@ export function RegisterForm({
               </div>
 
               {/* Confirm Password */}
-              <div className="grid gap-2 text-gray-700 hover:text-pink-500 transition-colors">
+              <div className="space-y-2">
                 <Label htmlFor="confirmPassword">Confirm Password</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                   />
                   <button
                     type="button"
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-pink-500"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
@@ -189,39 +211,26 @@ export function RegisterForm({
               </div>
 
               {/* Submit Button */}
-              <Button
-                type="submit"
-                className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white px-4 py-2 rounded-md hover:opacity-90 transition-opacity text-center"
-              >
+              <Button type="submit" className="w-full mt-4 bg-pink-600 hover:bg-pink-700">
                 Register
               </Button>
 
               {/* Login Link */}
-              <div className="text-center text-sm">
-                Already have an account?{" "}
-                <a href="/login" className="underline underline-offset-4">
+              <div className="text-center text-sm mt-4">
+                Already have an account?{' '}
+                <a href="/login" className="text-pink-600 hover:underline">
                   Login
                 </a>
               </div>
             </div>
           </form>
-
-          {/* Image Side */}
-          <div className="relative hidden bg-muted md:block">
-            <img
-              src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=80"
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
         </CardContent>
       </Card>
 
       {/* Terms Note */}
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </div>
+      <p className="text-xs text-gray-500 text-center">
+        By registering, you agree to our Terms and Privacy Policy
+      </p>
     </div>
   );
 }

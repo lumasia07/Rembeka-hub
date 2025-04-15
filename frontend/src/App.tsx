@@ -7,7 +7,7 @@ import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { FeaturedProducts } from './components/FeaturedProducts';
 import { VendorShowcase } from './components/VendorShowcase';
-import { Features } from './components/Features';
+// import { Features } from './components/Features';
 import { Footer } from './components/Footer';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/RegisterPage';
@@ -40,7 +40,7 @@ export function App() {
                   <FeaturedProducts />
                   <FeaturedServices />
                   <VendorShowcase />
-                  <Features />
+                  {/* <Features /> */}
                   <Footer />
                 </>
               }
