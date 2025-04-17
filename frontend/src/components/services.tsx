@@ -25,7 +25,7 @@ export const ServicesList: React.FC = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/service/all-services`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/service/my-services`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -124,7 +124,7 @@ export const ServicesList: React.FC = () => {
               size="sm" 
               variant="outline" 
               className="gap-1 w-full sm:w-auto" 
-              onClick={() => navigate("/all-services")}
+              onClick={() => navigate("/my-services")}
             >
               View All <ChevronRight className="w-4 h-4" />
             </Button>

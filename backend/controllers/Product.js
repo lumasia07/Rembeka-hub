@@ -163,3 +163,35 @@ export async function deleteProduct(req, res) {
         return res.status(500).json({ error: "Server error. Please try again!" });
     }
 }
+
+// Get Products by User
+export async function getProductsByUser(req, res) {
+    try {
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: User ID is missing" });
+        }
+
+        // Find the user's hub
+        const userHub = await prisma.hub.findUnique({
+            where: { userId }
+        });
+
+        if (!userHub) {
+            return res.status(404).json({ error: "Hub not found for this user" });
+        }
+
+        // Fetch products that belong to the user's hub
+        const userProducts = await prisma.product.findMany({
+            where: {
+                hubId: userHub.id
+            }
+        });
+
+        return res.status(200).json(userProducts);
+    } catch (error) {
+        console.error("Error fetching user products:", error);
+        return res.status(500).json({ error: "Server error. Please try again!" });
+    }
+}
