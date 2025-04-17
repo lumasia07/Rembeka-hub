@@ -204,7 +204,7 @@ export const AllProducts: React.FC = () => {
                         {product.description}
                       </td>
                       <td className="p-2">
-                        <Badge variant="secondary">${product.price.toFixed(2)}</Badge>
+                        <Badge variant="secondary">KES{product.price.toFixed(2)}</Badge>
                       </td>
                       <td className="p-2 flex gap-2">
                         <Button 

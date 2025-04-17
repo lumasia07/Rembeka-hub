@@ -157,7 +157,7 @@ export const ProductsList: React.FC = () => {
                   <div className="flex justify-between items-start mb-3">
                     <h3 className="font-semibold text-lg line-clamp-1">{product.name}</h3>
                     <Badge variant="secondary" className="ml-2 whitespace-nowrap">
-                      ${product.price.toFixed(2)}
+                      KES{product.price.toFixed(2)}
                     </Badge>
                   </div>
                   {product.category && (
