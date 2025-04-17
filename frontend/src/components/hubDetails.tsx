@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/components/ui/card";
 import { Button } from "@/components/components/ui/button";
-import { Avategar, AvatarImage, AvatarFallback } from "@/components/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/components/ui/avatar";
 import { Edit, MapPin, Share2, Heart } from "lucide-react";
 import { Badge } from "@/components/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/components/ui/tooltip";
