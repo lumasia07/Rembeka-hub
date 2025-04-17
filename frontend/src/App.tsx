@@ -17,11 +17,11 @@ import Dashboard from './pages/dashBoard';
 import CreateProductForm from './pages/AddProduct';
 import { AllProducts } from './pages/AllProducts';
 import HubPage from './pages/viewStore';
-import ProductShowcase from './pages/AllProductsPublic';
+import { ProductShowcase} from './pages/AllProductsPublic';
 import CreateServiceForm from './pages/AddService';
 import { AllServices } from './pages/AllServices';
 import { FeaturedServices } from './components/FeauturedServices';
-import ServiceShowcase from './pages/AllServicesPublic';
+import { ServiceShowcase } from './pages/AllServicesPublic';
 import { SocialLinks } from './pages/SocialLinks';
 import AllVendorShowcase from './components/AllVendors';
 

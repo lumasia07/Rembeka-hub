@@ -283,7 +283,7 @@ const HubPage = () => {
                   <CardContent className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-semibold">{product.name}</h3>
-                      <span className="font-bold text-primary">${product.price.toFixed(2)}</span>
+                      <span className="font-bold text-primary">KES{product.price.toFixed(2)}</span>
                     </div>
                     <p className="text-sm text-gray-500 mb-3 line-clamp-2">{product.description}</p>
                     {product.category && (
