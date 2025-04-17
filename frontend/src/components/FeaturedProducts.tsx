@@ -12,7 +12,8 @@ import {
   FaFacebook,
   FaTwitter,
   FaYoutube,
-  FaTiktok
+  FaTiktok,
+  FaWhatsapp
 } from 'react-icons/fa';
 
 interface Product {
@@ -103,6 +104,7 @@ export const FeaturedProducts = () => {
       case 'twitter': return <FaTwitter className={`${base} text-sky-500`} />;
       case 'youtube': return <FaYoutube className={`${base} text-red-600`} />;
       case 'tiktok': return <FaTiktok className={`${base} text-black`} />;
+      case 'whatsapp': return <FaWhatsapp className={`${base} text-green-400`} />;
       default: return <div className={base} />;
     }
   };
