@@ -51,11 +51,11 @@ export function App() {
             <Route path="/create-hub" element={<HubRegistrationForm />} />
             <Route path="/dashboard" element={<Dashboard/>} />
             <Route path="/add-product" element={<CreateProductForm/>} />
-            <Route path="/all-products" element={<AllProducts/>} />
+            <Route path="/my-products" element={<AllProducts/>} />
             <Route path="/hubs/:id" element={<HubPage/>} />
             <Route path="/products" element={<ProductShowcase/>} />
             <Route path="/add-service" element={<CreateServiceForm/>} />
-            <Route path="/all-services" element={<AllServices/>} />
+            <Route path="/my-services" element={<AllServices/>} />
             <Route path="/services" element={<ServiceShowcase/>} />
             <Route path="/socials" element={<SocialLinks/>} />
             <Route path="/vendors" element={<AllVendorShowcase/>} />

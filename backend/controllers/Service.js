@@ -165,3 +165,31 @@ export async function deleteService(req, res) {
         return res.status(500).json({ error: "Server error. Please try again!" });
     }
 }
+
+// Get Services for Authenticated User
+export async function getServicesByOwner(req, res) {
+    try {
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized: User ID is missing" });
+        }
+
+        const userHub = await prisma.hub.findUnique({
+            where: { userId }
+        });
+
+        if (!userHub) {
+            return res.status(404).json({ error: "Hub not found for this user" });
+        }
+
+        const services = await prisma.service.findMany({
+            where: { hubId: userHub.id }
+        });
+
+        return res.status(200).json(services);
+    } catch (error) {
+        console.error("Error fetching user's services:", error);
+        return res.status(500).json({ error: "Server error. Please try again!" });
+    }
+}

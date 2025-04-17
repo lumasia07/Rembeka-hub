@@ -50,7 +50,7 @@ export const AllProducts: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/all-products`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/product/my-products`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
