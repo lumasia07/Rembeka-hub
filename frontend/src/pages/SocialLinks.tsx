@@ -47,16 +47,26 @@ export const SocialLinks = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+  
     try {
       setLoading(true);
-      const socialUrl = `${formData.platform.toLowerCase()}.com/${formData.handle}`;
+  
+      let socialUrl = "";
+  
+      // Handle platform-specific URL generation
+      if (formData.platform.toLowerCase() === "whatsapp") {
+        const phone = formData.handle.replace(/\D/g, ""); // Remove non-digits
+        socialUrl = `https://wa.me/${phone}`;
+      } else {
+        socialUrl = `https://www.${formData.platform.toLowerCase()}.com/${formData.handle}`;
+      }
+  
       const endpoint = editingId 
         ? `${import.meta.env.VITE_API_URL}/api/socials/edit-social/${editingId}`
         : `${import.meta.env.VITE_API_URL}/api/socials/add-socials`;
       
       const method = editingId ? "PUT" : "POST";
-
+  
       const response = await fetch(endpoint, {
         method,
         headers: {
@@ -68,11 +78,11 @@ export const SocialLinks = () => {
           url: socialUrl 
         })
       });
-
+  
       if (!response.ok) {
         throw new Error(editingId ? "Failed to update" : "Failed to create");
       }
-
+  
       fetchSocials();
       setEditingId(null);
       setFormData({ platform: "", handle: "" });
@@ -81,7 +91,7 @@ export const SocialLinks = () => {
     } finally {
       setLoading(false);
     }
-  };
+  };  
 
   const handleDelete = async (id: string) => {
     try {
@@ -121,6 +131,7 @@ export const SocialLinks = () => {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="Instagram">Instagram</SelectItem>
+            <SelectItem value="Whatsapp">Whatsapp</SelectItem>
             <SelectItem value="TikTok">TikTok</SelectItem>
             <SelectItem value="Facebook">Facebook</SelectItem>
             <SelectItem value="Twitter">Twitter</SelectItem>
@@ -145,8 +156,8 @@ export const SocialLinks = () => {
           <div key={social.id} className="flex items-center justify-between p-2 border rounded">
             <div className="flex items-center gap-4">
               <span className="font-medium">{social.platform}</span>
-              <a 
-                href={`https://${social.url}`} 
+              <a
+                href={social.url}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:underline"

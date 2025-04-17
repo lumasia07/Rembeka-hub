@@ -6,7 +6,7 @@ import GreetingHeader from "@/components/greetingDash";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/components/ui/tabs";
 import { ScrollArea } from "@/components/components/ui/scroll-area";
 import { Separator } from "@/components/components/ui/separator";
-import { UserPlus, TrendingUp, Settings, Share2 } from "lucide-react";
+import { UserPlus, TrendingUp, Share2 } from "lucide-react";
 import { Card, CardContent } from "@/components/components/ui/card";
 import { SocialLinks } from "./SocialLinks";
 
